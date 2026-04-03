@@ -154,7 +154,7 @@ async function postToInstagram(content, imageUrl) {
   if (!process.env.INSTAGRAM_ACCOUNT_ID || !process.env.INSTAGRAM_ACCESS_TOKEN) throw new Error('Instagram credentials not set');
   if (!imageUrl) throw new Error('Instagram needs an image URL');
   const base = `https://graph.facebook.com/v19.0/${process.env.INSTAGRAM_ACCOUNT_ID}`;
-  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
+  const token = process.env.META_PAGE_TOKEN;
   const container = await fetch(`${base}/media`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
