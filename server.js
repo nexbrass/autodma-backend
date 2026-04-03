@@ -12,20 +12,21 @@ try {
   db = new Database('autodma.db');
   db.exec(`
     CREATE TABLE IF NOT EXISTS queue (
-      id TEXT PRIMARY KEY,
-      client_id TEXT,
-      client_name TEXT,
-      platform TEXT,
-      content TEXT,
-      content_type TEXT,
-      scheduled_date TEXT,
-      scheduled_time TEXT,
-      status TEXT DEFAULT 'pending',
-      created_at TEXT,
-      posted_at TEXT,
-      post_url TEXT,
-      error_msg TEXT
-    );
+  id TEXT PRIMARY KEY,
+  client_id TEXT,
+  client_name TEXT,
+  platform TEXT,
+  content TEXT,
+  content_type TEXT,
+  scheduled_date TEXT,
+  scheduled_time TEXT,
+  status TEXT DEFAULT 'pending',
+  created_at TEXT,
+  posted_at TEXT,
+  post_url TEXT,
+  error_msg TEXT,
+  image_url TEXT
+);
     CREATE TABLE IF NOT EXISTS analytics (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       client_id TEXT,
@@ -84,14 +85,15 @@ app.post('/api/sync-queue', (req, res) => {
   if (!items || !Array.isArray(items)) return res.status(400).json({ error: 'items array required' });
   try {
     const insert = db.prepare(`
-      INSERT OR REPLACE INTO queue
-      (id, client_id, client_name, platform, content, content_type,
-       scheduled_date, scheduled_time, status, created_at)
-      VALUES (?,?,?,?,?,?,?,?,?,?)`);
-    items.forEach(item => {
-      insert.run(item.id, item.clientId, item.clientName, item.platform,
-        item.text, item.contentType, item.scheduledDate, item.scheduledTime,
-        item.status, item.createdAt);
+  INSERT OR REPLACE INTO queue
+  (id, client_id, client_name, platform, content, content_type,
+   scheduled_date, scheduled_time, status, created_at, image_url)
+  VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
+items.forEach(item => {
+  insert.run(item.id, item.clientId, item.clientName, item.platform,
+    item.text, item.contentType, item.scheduledDate, item.scheduledTime,
+    item.status, item.createdAt, item.image_url);
+});
     });
     res.json({ success: true, synced: items.length });
   } catch (e) {
