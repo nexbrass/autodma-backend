@@ -85,15 +85,14 @@ app.post('/api/sync-queue', (req, res) => {
   if (!items || !Array.isArray(items)) return res.status(400).json({ error: 'items array required' });
   try {
     const insert = db.prepare(`
-  INSERT OR REPLACE INTO queue
-  (id, client_id, client_name, platform, content, content_type,
-   scheduled_date, scheduled_time, status, created_at, image_url)
-  VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
-items.forEach(item => {
-  insert.run(item.id, item.clientId, item.clientName, item.platform,
-    item.text, item.contentType, item.scheduledDate, item.scheduledTime,
-    item.status, item.createdAt, item.image_url);
-});
+      INSERT OR REPLACE INTO queue
+      (id, client_id, client_name, platform, content, content_type,
+       scheduled_date, scheduled_time, status, created_at, image_url)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?)`);
+    items.forEach(item => {
+      insert.run(item.id, item.clientId, item.clientName, item.platform,
+        item.text, item.contentType, item.scheduledDate, item.scheduledTime,
+        item.status, item.createdAt, item.image_url);
     });
     res.json({ success: true, synced: items.length });
   } catch (e) {
