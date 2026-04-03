@@ -237,7 +237,24 @@ cron.schedule('*/5 * * * *', async () => {
     await new Promise(r => setTimeout(r, 2000));
   }
 }, { timezone: 'Asia/Kolkata' });
+// ✅ Instagram Webhook Verification (GET)
+app.get('/webhook/instagram', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
 
+  if (mode === 'subscribe' && token === process.env.META_VERIFY_TOKEN) {
+    console.log('✅ Webhook Verified!');
+    return res.status(200).send(challenge);
+  }
+  return res.status(403).send('Forbidden');
+});
+
+// ✅ Instagram Events Receive Karna (POST)
+app.post('/webhook/instagram', (req, res) => {
+  console.log('📩 Instagram Event:', JSON.stringify(req.body));
+  res.status(200).send('EVENT_RECEIVED');
+});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`\n AutoDMA Backend v2.0`);
