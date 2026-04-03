@@ -44,7 +44,22 @@ try {
     prepare: (sql) => ({
       all: (...args) => memStore.queue,
       get: (...args) => memStore.queue.find(q => q.id === args[0]),
-      run: (...args) => {}
+      run: (...args) => {
+        if (sql.includes('INSERT OR REPLACE')) {
+          const existing = memStore.queue.findIndex(q => q.id === args[0]);
+          const item = {
+            id: args[0], client_id: args[1], client_name: args[2],
+            platform: args[3], content: args[4], content_type: args[5],
+            scheduled_date: args[6], scheduled_time: args[7],
+            status: args[8], created_at: args[9], image_url: args[10]
+          };
+          if (existing >= 0) memStore.queue[existing] = item;
+          else memStore.queue.push(item);
+        } else if (sql.includes('UPDATE queue SET status=?')) {
+          const item = memStore.queue.find(q => q.id === args[args.length - 1]);
+          if (item) item.status = args[0];
+        }
+      }
     }),
     exec: () => {}
   };
